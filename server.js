@@ -1,6 +1,7 @@
 var http = require('http');
 var mysql = require('mysql');
 var fs = require('fs');
+var qs = require('querystring');
 // fs = file system ファイル操作を行うモジュール
 //標準関数 require = node js に含まれる標準機能を呼び出すなど、任意のモジュールを呼び出す
 // http = node が用意しているweb serverを書くためのモジュール
@@ -20,12 +21,16 @@ var server = http.createServer(
     if (req.url === '/todo/show'){
       todoController.show();
     } else if (req.url === '/todo/create'){
-
+      todoController.create();
     } else if (req.url === '/todo/edit'){
-
+      todoController.edit();
     } else if (req.url === '/todo/delete'){
-
-    } else if (req.url === '/'){
+      todoController.delete();
+    } else if (req.url === '/account/login'){
+      todoController.login();
+    } else if (req.url === '/account/create'){
+      todoController.accountCreate();
+    } else if (req.url === '/'||req.url === '/login'||req.url === '/todo'||req.url === '/create'){
       var fileReader = new FileReader('./assets');
       var contents = fileReader.read('index.html');
       res.writeHead(200,{
@@ -42,9 +47,9 @@ var server = http.createServer(
       console.log(contents);
       res.write(contents);
       res.end();
-    } else if (req.url === '/application.js'){
+    } else if (req.url.match(/^\/.*\.js$/)){
       var fileReader = new FileReader('./assets');
-      var contents = fileReader.read('application.js');
+      var contents = fileReader.read(req.url.substr(1));
       res.writeHead(200,{
         'content-type': 'text/javascript'
       })
@@ -85,6 +90,108 @@ class TodoController {
       })
       this.res.end(JSON.stringify(tasks));
     }.bind(this));
+  };
+  create(){
+    var body = '';
+    this.req.on('data',function(data){
+      body+= data;
+      console.log(data);
+    });
+    this.req.on('end',function(){
+      var post = qs.parse(body);
+      console.log(post);
+      this.connection.query('insert into todos (text,plan_date,done) values (?,?,?)',[post.text, post.plan_date, false],function(error,rows,fields){
+        console.log(error);
+        this.res.writeHead(200,{
+          'content-type':'application/json'
+        })
+        this.res.end(JSON.stringify({}));
+      }.bind(this));
+    }.bind(this))
+  }
+  edit(){
+    var body = '';
+    this.req.on('data',function(data){
+      body+= data;
+      console.log(data);
+    });
+    this.req.on('end',function(){
+      var post = qs.parse(body);
+      console.log(post);
+      var date = new Date(post.plan_date);
+      post.plan_date = date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate();
+      post.done = (post.done === 'true');
+      this.connection.query('update todos set text = ?,plan_date = ?,done =? where id = ?',[post.text, post.plan_date, post.done,post.id],function(error,rows,fields){
+        console.log(error);
+        this.res.writeHead(200,{
+          'content-type':'application/json'
+        })
+        this.res.end(JSON.stringify({}));
+      }.bind(this));
+    }.bind(this))
+  }
+  delete(){
+    var body = '';
+    this.req.on('data',function(data){
+      body+= data;
+      console.log(data);
+    });
+    this.req.on('end',function(){
+      var post = qs.parse(body);
+      console.log(post);
+      this.connection.query('delete from todos where id = ?',[post.id],function(error,rows,fields){
+        console.log(error);
+        this.res.writeHead(200,{
+          'content-type':'application/json'
+        })
+        this.res.end(JSON.stringify({}));
+      }.bind(this));
+    }.bind(this))
+  }
+  login(){
+    var body = '';
+    this.req.on('data',function(data){
+      body+= data;
+      console.log(data);
+    });
+    this.req.on('end',function(){
+      var post = qs.parse(body);
+      console.log(post);
+      this.connection.query('select mail, password from users where mail = ?',[post.username],function(error,rows,fields){
+        var username = rows[0].mail;
+        var password = rows[0].password;
+        if (post.password === password){
+          this.res.writeHead(200,{
+            'content-type':'application/json'
+          })
+          this.res.end(JSON.stringify({}));
+        } else {
+          console.log(error);
+          this.res.writeHead(400,{
+            'content-type':'application/json'
+          })
+          this.res.end(JSON.stringify({}));
+        }
+      }.bind(this))
+    }.bind(this))
+  }
+  accountCreate(){
+    var body = '';
+    this.req.on('data',function(data){
+      body+= data;
+      console.log(data);
+    });
+    this.req.on('end',function(){
+      var post = qs.parse(body);
+      console.log(post);
+      this.connection.query('insert into users (mail,password) values (?,?)',[post.username, post.password],function(error,rows,fields){
+        console.log(error);
+        this.res.writeHead(200,{
+          'content-type':'application/json'
+        })
+        this.res.end(JSON.stringify({}));
+      }.bind(this));
+    }.bind(this))
   }
 }
 class FileReader {
