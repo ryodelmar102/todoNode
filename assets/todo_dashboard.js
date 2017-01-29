@@ -38,6 +38,8 @@ class TodoDashboard {
     var component = document.createElement('div');
     var todoInput = new TodoInput();
     todoInput.onCreate = this.onRefresh.bind(this);
+    todoInput.unDone = this.unDone.bind(this);
+    todoInput.showAll = this.onRefresh.bind(this);
     var create = todoInput.render();
     component.appendChild(create);
 // todo input をインスタンス化して、render methodを呼んで、その結果を変数代入して、その変数をappendChild
@@ -49,6 +51,32 @@ class TodoDashboard {
   onRefresh(){
     this.superComponents.innerHTML = '';
     this.getLists();
+    var components = this.render();
+    this.superComponents.appendChild(components);
+  }
+  getUndoneLists(){
+    var xhr = new XMLHttpRequest();
+    var url = 'http://localhost:3000/todo/show/undone';
+    xhr.onreadystatechange = function(){
+      console.log(xhr.status)
+      if(xhr.readyState === 4){
+         if(xhr.status === 200){
+           var res = JSON.parse(xhr.responseText);
+           this.state.lists = res;
+           console.log(xhr.status);
+         }
+      }
+    }.bind(this)
+    xhr.open('GET',url,false);
+    xhr.send();
+  }
+  unDone(checkbox){
+    this.superComponents.innerHTML = '';
+    if (checkbox.checked){
+      this.getUndoneLists();
+    } else {
+      this.getLists();
+    }
     var components = this.render();
     this.superComponents.appendChild(components);
   }

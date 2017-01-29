@@ -20,6 +20,8 @@ var server = http.createServer(
     console.log(req.url);
     if (req.url === '/todo/show'){
       todoController.show();
+    } else if (req.url === '/todo/show/undone'){
+      todoController.undone();
     } else if (req.url === '/todo/create'){
       todoController.create();
     } else if (req.url === '/todo/edit'){
@@ -74,6 +76,25 @@ class TodoController {
   }
   show(){
     this.connection.query('select * from todos',function(error,rows,fields){
+      // error: the value returned when failed
+      // rows: when successed, acquire all rows
+      // fields: id, text, plan_date etc...
+      if(error){
+        throw error;
+      }
+      console.log(rows[0].id);
+      var tasks = rows.map(function(record){
+        var task = new Task(record.id,record.text,record.plan_date,record.done);
+        return task;
+      });
+      this.res.writeHead(200,{
+        'content-type': 'application/json'
+      })
+      this.res.end(JSON.stringify(tasks));
+    }.bind(this));
+  }
+  undone(){
+    this.connection.query('select * from todos where done=0',function(error,rows,fields){
       // error: the value returned when failed
       // rows: when successed, acquire all rows
       // fields: id, text, plan_date etc...
