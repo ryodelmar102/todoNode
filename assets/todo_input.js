@@ -19,39 +19,33 @@ class TodoInput {
     button.value = 'Create';
     button.onclick = this.onClicked.bind(this);
     createbutton.appendChild(button);
-    var showundone = document.createElement('div');
+    var showundone = document.createElement('label');
     showundone.className = 'showundone';
-    var undonebutton = document.createElement('input');
-    undonebutton.className = 'undonebutton';
-    undonebutton.type = 'button';
-    undonebutton.value = 'Show Undone';
-    undonebutton.onclick = this.unDone.bind(this,this.checked);
-    showundone.appendChild(undonebutton);
-    var showall = document.createElement('div');
-    showall.className = 'showall';
-    var allbutton = document.createElement('input');
-    allbutton.className = 'allbutton';
-    allbutton.type = 'button';
-    allbutton.value = 'Show All';
-    allbutton.onclick = this.showAll.bind(this);
-    showall.appendChild(allbutton);
+    showundone.innerText = 'Show Undone';
     var undonecheck = document.createElement('div');
     undonecheck.className = 'undonecheck';
     this.checked = document.createElement('input')
     this.checked.className = 'check';
     this.checked.type = 'checkbox';
-    this.checked.value = 'Show Undone';
-    this.checked.checked = this.checked ? true:false;
+    this.checked.checked = false;
     this.checked.onchange = this.undoneCheck.bind(this);
     undonecheck.appendChild(this.checked);
+    showundone.appendChild(this.checked);
+    var show = document.createElement('div');
+    show.className = 'show';
+    var showbutton = document.createElement('input');
+    showbutton.className = 'showbutton';
+    showbutton.type = 'button';
+    showbutton.value = 'Show';
+    showbutton.onclick = this.showList.bind(this,this.checked);
+    show.appendChild(showbutton);
     var create = document.createElement('div');
     create.className = 'create';
     create.appendChild(this.text);
     create.appendChild(this.plan_date);
     create.appendChild(createbutton);
+    create.appendChild(show);
     create.appendChild(showundone);
-    create.appendChild(showall);
-    create.appendChild(undonecheck);
     return create;
   }
   onClicked(){
@@ -82,6 +76,5 @@ class TodoInput {
   }
   undoneCheck(event){
     this.checked = event.target.checked;
-    return this.checked;
-  }.bind(this)
+  }
 }

@@ -1,69 +1,56 @@
-class Task {
-  constructor(id, text, plan_date, done){
+class Account {
+  constructor(id, username, password){
     this.state = {
       id:id,
-      text:text,
-      plan_date:plan_date,
-      done:done
+      username:username,
+      password:password,
     }
   }
   render(){
     var id = document.createElement('div');
-    id.className = 'todoId';
+    id.className = 'accountId';
     id.innerText = this.state.id;
-    this.text = document.createElement('input');
-    this.text.className = 'todoText';
-    this.text.value = this.state.text;
-    this.plan_date = document.createElement('input');
-    this.plan_date.className = 'plan_date';
-    var date = new Date(this.state.plan_date);
-    this.plan_date.value = date.getFullYear()+'/'+(date.getMonth()+1)+'/'+date.getDate();
-    var todoDone = document.createElement('div');
-    todoDone.className = 'done';
-    var check = document.createElement('input');
-    check.className = 'check';
-    check.type = 'checkbox';
-    check.checked = this.state.done ? true:false;
-    check.onchange = this.onChange.bind(this);
-    todoDone.appendChild(check);
-    var todoEdit = document.createElement('div');
-    todoEdit.className = 'todoEdit';
+    this.username = document.createElement('input');
+    this.username.className = 'username';
+    this.username.value = this.state.username;
+    this.password = document.createElement('input');
+    this.password.className = 'password';
+    this.password.value = this.state.password;
+    var accountEdit = document.createElement('div');
+    accountEdit.className = 'accountEdit';
     var edit = document.createElement('input');
     edit.className = 'edit';
     edit.type = 'button';
     edit.onclick = this.onChange.bind(this);
     edit.value = 'Edit';
-    todoEdit.appendChild(edit);
-    var todoDelete = document.createElement('div');
-    todoDelete.className = 'todoDelete';
+    accountEdit.appendChild(edit);
+    var accountDelete = document.createElement('div');
+    accountDelete.className = 'accountDelete';
     var deletebutton = document.createElement('input');
     deletebutton.className = 'deletebutton';
     deletebutton.type = 'button';
     deletebutton.onclick = this.onDelete.bind(this);
     deletebutton.value = 'Delete';
-    todoDelete.appendChild(deletebutton);
+    accountDelete.appendChild(deletebutton);
     var component = document.createElement('div');
     component.className = 'component';
     component.appendChild(id);
-    component.appendChild(this.text);
-    component.appendChild(this.plan_date);
-    component.appendChild(todoDone);
-    component.appendChild(todoEdit);
-    component.appendChild(todoDelete);
+    component.appendChild(this.username);
+    component.appendChild(this.password);
+    component.appendChild(accountEdit);
+    component.appendChild(accountDelete);
     return component;
   };
-  onChange(event){
-    this.state.done = event.target.checked;
-    this.state.text = this.text.value;
-    this.state.plan_date = this.plan_date.value;
+  onChange(){
+    this.state.username = this.username.value;
+    this.state.password = this.password.value;
     var data = {
       id: this.state.id,
-      text: this.state.text,
-      plan_date: this.state.plan_date,
-      done: this.state.done
+      username: this.state.username,
+      password: this.state.password,
     };
     var xhr = new XMLHttpRequest();
-    var url = 'http://localhost:3000/todo/edit';
+    var url = 'http://localhost:3000/account/edit';
     xhr.onreadystatechange = function(){
       if(xhr.readyState === 4){
          if(xhr.status === 200){
@@ -88,7 +75,7 @@ class Task {
       id: this.state.id
     }
     var xhr = new XMLHttpRequest();
-    var url = 'http://localhost:3000/todo/delete';
+    var url = 'http://localhost:3000/account/delete';
     xhr.onreadystatechange = function(){
       if(xhr.readyState === 4){
          if(xhr.status === 200){

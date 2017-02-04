@@ -1,4 +1,8 @@
 function loadScript(filename){
+// 合致するデータがあればその番号を返す
+  if (filenames.indexOf(filename)>=0){
+    return;
+  }
   var xhr = new XMLHttpRequest();
   var url = filename;
   xhr.onreadystatechange = function(){
@@ -9,12 +13,14 @@ function loadScript(filename){
          script.innerHTML = xhr.responseText;
          console.log(xhr.responseText);
          document.head.appendChild(script);
+         filenames.push(filename);
        }
     }
   }.bind(this)
   xhr.open('GET',url,false);
   xhr.send();
 }
+var filenames = [];
 window.onload = function(){
 //  loadScript('task.js');
 //  loadScript('todo_input.js');

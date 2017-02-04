@@ -35,6 +35,7 @@ class Login {
     return login;
   }
   onClicked(){
+    try{
     var data = {
       username: this.username.value,
       password: this.password.value
@@ -48,11 +49,8 @@ class Login {
            window.todoApp.changeUrl('/todo');
          } else if(xhr.status === 400){
            console.log(xhr.status);
-           document.body.innerHTML = '';
-           this.username = null;
-           this.password = null;
-           var login = login.render();
-           document.body.appendChild(login);
+           this.username.value = '';
+           this.password.value = '';           
          }
       }
     }.bind(this);
@@ -64,6 +62,10 @@ class Login {
     var urlEncodedData = urlEncodedDataPairs.join('&').replace(/%20/g, '+');
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     xhr.send(urlEncodedData);
+  } catch (e){
+    this.username.value = '';
+    this.password.value = '';
+  }
   }
   onCreate(){
     window.todoApp.changeUrl('/create');

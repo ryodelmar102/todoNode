@@ -38,7 +38,31 @@
   flex:1;
   border:1px solid;
 }
+.todoEdit{
+  flex:1;
+  border:1px solid;
+}
 .superComponents{
   width:500px;
   margin:0 auto;
+}
+.accountId{
+  flex:1;
+  border:1px solid;
+}
+.username{
+ flex:1;
+ border:1px solid;
+}
+.password{
+ flex:1;
+ border:1px solid;
+}
+.accountEdit{
+ flex:1;
+ border:1px solid;
+}
+.accountDelete{
+ flex:1;
+ border:1px solid;
 }

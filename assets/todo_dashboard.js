@@ -31,15 +31,15 @@ class TodoDashboard {
   render(){
     var tasks = this.state.lists.map(function(list){
       var task = new Task(list.id, list.text, list.plan_date, list.done);
-      task.onDelete = this.onRefresh.bind(this);
+      task.onDeleted = this.onRefresh.bind(this);
+      task.onEdited = this.onRefresh.bind(this);
       return task.render();
     }.bind(this));
     console.log(tasks);
     var component = document.createElement('div');
     var todoInput = new TodoInput();
     todoInput.onCreate = this.onRefresh.bind(this);
-    todoInput.unDone = this.unDone.bind(this);
-    todoInput.showAll = this.onRefresh.bind(this);
+    todoInput.showList = this.showList.bind(this);
     var create = todoInput.render();
     component.appendChild(create);
 // todo input をインスタンス化して、render methodを呼んで、その結果を変数代入して、その変数をappendChild
@@ -70,7 +70,7 @@ class TodoDashboard {
     xhr.open('GET',url,false);
     xhr.send();
   }
-  unDone(checkbox){
+  showList(checkbox){
     this.superComponents.innerHTML = '';
     if (checkbox.checked){
       this.getUndoneLists();
