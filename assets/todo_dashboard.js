@@ -1,7 +1,8 @@
 class TodoDashboard {
-  constructor() {
+  constructor(role) {
     this.state = {
-      lists:[]
+      lists:[],
+      role:role
     };
   }
   getLists(){
@@ -23,25 +24,29 @@ class TodoDashboard {
   renderComponents(){
     var superComponents = document.createElement('div');
     superComponents.className = 'superComponents';
+    var todoShow = new TodoShow();
+    todoShow.showList = this.showList.bind(this);
+    var show = todoShow.render();
     var components = this.render();
-    superComponents.appendChild(components);
     this.superComponents = superComponents;
+    var todoInput = new TodoInput();
+    todoInput.onCreate = this.onRefresh.bind(this);
+    var create = todoInput.render();
+    superComponents.appendChild(create);
+    superComponents.appendChild(show);
+    superComponents.appendChild(components);
     return superComponents;
   }
   render(){
     var tasks = this.state.lists.map(function(list){
-      var task = new Task(list.id, list.text, list.plan_date, list.done);
+      var task = new Task(list.id, list.text, list.plan_date, list.done, this.state.role);
       task.onDeleted = this.onRefresh.bind(this);
       task.onEdited = this.onRefresh.bind(this);
       return task.render();
     }.bind(this));
     console.log(tasks);
     var component = document.createElement('div');
-    var todoInput = new TodoInput();
-    todoInput.onCreate = this.onRefresh.bind(this);
-    todoInput.showList = this.showList.bind(this);
-    var create = todoInput.render();
-    component.appendChild(create);
+    component.id = 'todoDashboard';
 // todo input をインスタンス化して、render methodを呼んで、その結果を変数代入して、その変数をappendChild
     tasks.forEach(function(task){
       component.appendChild(task);
@@ -49,7 +54,8 @@ class TodoDashboard {
     return component;
   }
   onRefresh(){
-    this.superComponents.innerHTML = '';
+    var component = this.superComponents.querySelector('#todoDashboard');
+    this.superComponents.removeChild(component);
     this.getLists();
     var components = this.render();
     this.superComponents.appendChild(components);
@@ -71,7 +77,9 @@ class TodoDashboard {
     xhr.send();
   }
   showList(checkbox){
-    this.superComponents.innerHTML = '';
+    console.log(this.superComponents.removeChild);
+    var component = this.superComponents.querySelector('#todoDashboard');
+    this.superComponents.removeChild(component);
     if (checkbox.checked){
       this.getUndoneLists();
     } else {

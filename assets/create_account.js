@@ -20,6 +20,8 @@ class CreateAccount {
     createbutton.appendChild(button);
     var create = document.createElement('div');
     create.className = 'create';
+    create.appendChild(logout);
+    create.appendChild(todo);
     create.appendChild(this.username);
     create.appendChild(this.password);
     create.appendChild(createbutton);
@@ -48,5 +50,8 @@ class CreateAccount {
     var urlEncodedData = urlEncodedDataPairs.join('&').replace(/%20/g, '+');
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     xhr.send(urlEncodedData);
+  }
+  todoClicked(){
+    window.todoApp.changeUrl('/todo');
   }
 }

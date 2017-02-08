@@ -4,6 +4,23 @@ class AccountInput {
     this.password = null;
   }
   render(){
+    var logout = document.createElement('div');
+    logout.className = 'logout';
+    var logoutbutton = document.createElement('input');
+    logoutbutton.className = 'logoutbutton';
+    logoutbutton.type = 'button';
+    logoutbutton.value = 'Log Out';
+    logout.appendChild(logoutbutton);
+    var todoInput = new TodoInput();
+    logoutbutton.onclick = todoInput.onLogOut;
+    var todo = document.createElement('div');
+    todo.className = 'todo';
+    var todobutton = document.createElement('input');
+    todobutton.className = 'todobutton';
+    todobutton.type = 'button';
+    todobutton.value = 'To Do';
+    todo.appendChild(todobutton);
+    todobutton.onclick = this.todoClicked.bind(this);
     this.username = document.createElement('input');
     this.username.className = 'username';
     this.username.type = 'username';
@@ -20,6 +37,8 @@ class AccountInput {
     createbutton.appendChild(button);
     var create = document.createElement('div');
     create.className = 'create';
+    create.appendChild(logout);
+    create.appendChild(todo);
     create.appendChild(this.username);
     create.appendChild(this.password);
     create.appendChild(createbutton);
@@ -50,5 +69,8 @@ class AccountInput {
     var urlEncodedData = urlEncodedDataPairs.join('&').replace(/%20/g, '+');
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     xhr.send(urlEncodedData);
+  }
+  todoClicked(){
+    window.todoApp.changeUrl('/todo');
   }
 }

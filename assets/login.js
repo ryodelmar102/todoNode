@@ -36,36 +36,36 @@ class Login {
   }
   onClicked(){
     try{
-    var data = {
-      username: this.username.value,
-      password: this.password.value
-    }
-    var xhr = new XMLHttpRequest();
-    var url = 'http://localhost:3000/account/login';
-    xhr.onreadystatechange = function(){
-      if(xhr.readyState === 4){
-         if(xhr.status === 200){
-           console.log(xhr.status);
-           window.todoApp.changeUrl('/todo');
-         } else if(xhr.status === 400){
-           console.log(xhr.status);
-           this.username.value = '';
-           this.password.value = '';           
-         }
+      var data = {
+        username: this.username.value,
+        password: this.password.value
       }
-    }.bind(this);
-    xhr.open('POST',url,false);
-    var urlEncodedDataPairs = [];
-    for (var name in data) {
-    	urlEncodedDataPairs.push(encodeURIComponent(name) + '=' + encodeURIComponent(data[name]));
-    }
-    var urlEncodedData = urlEncodedDataPairs.join('&').replace(/%20/g, '+');
-    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    xhr.send(urlEncodedData);
-  } catch (e){
-    this.username.value = '';
-    this.password.value = '';
-  }
+      var xhr = new XMLHttpRequest();
+      var url = 'http://localhost:3000/account/login';
+      xhr.onreadystatechange = function(){
+        if(xhr.readyState === 4){
+          if(xhr.status === 200){
+            console.log(xhr.status);
+            window.todoApp.changeUrl('/todo');
+          } else if(xhr.status === 400){
+            console.log(xhr.status);
+            this.username.value = '';
+            this.password.value = '';
+          }
+        }
+      }.bind(this);
+      xhr.open('POST',url,false);
+      var urlEncodedDataPairs = [];
+      for (var name in data) {
+    	   urlEncodedDataPairs.push(encodeURIComponent(name) + '=' + encodeURIComponent(data[name]));
+       }
+       var urlEncodedData = urlEncodedDataPairs.join('&').replace(/%20/g, '+');
+       xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+       xhr.send(urlEncodedData);
+     } catch (e){
+       this.username.value = '';
+       this.password.value = '';
+     }
   }
   onCreate(){
     window.todoApp.changeUrl('/create');

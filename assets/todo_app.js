@@ -9,7 +9,8 @@ class TodoApp {
       if(xhr.readyState === 4){
          if(xhr.status === 200){
            var res = JSON.parse(xhr.responseText);
-           callback(res.loggedin);
+           console.log(res.loggedin, res.role);
+           callback(res.loggedin, res.role);
          }
       }
     }.bind(this)
@@ -17,7 +18,7 @@ class TodoApp {
     xhr.send();
   }
   checkUrl(){
-    this.checkAuth(function(loggedin){
+    this.checkAuth(function(loggedin, role){
       if (location.pathname === '/login'||location.pathname === '/'){
         if (!loggedin){
           loadScript('login.js');
@@ -34,7 +35,8 @@ class TodoApp {
           loadScript('task.js');
           loadScript('todo_input.js');
           loadScript('todo_dashboard.js');
-          var todoDashboard = new TodoDashboard();
+          loadScript('todo_show.js')
+          var todoDashboard = new TodoDashboard(role);
           todoDashboard.getLists();
           var components = todoDashboard.renderComponents();
           document.body.innerHTML = '';
@@ -54,12 +56,12 @@ class TodoApp {
           this.changeUrl('/todo');
         }
       }
-      if (location.pathname === '/account'){
-/*        if (loggedin){
+      if (location.pathname === '/account'  && (role === 'admin' || role === 'reference')){
+        if (loggedin){
           loadScript('account.js');
           loadScript('account_input.js');
           loadScript('account_dashboard.js');
-          var accountDashboard = new AccountDashboard();
+          var accountDashboard = new AccountDashboard(role);
           accountDashboard.getLists();
           var components = accountDashboard.renderComponents();
           document.body.innerHTML = '';
@@ -67,7 +69,7 @@ class TodoApp {
         } else {
           this.changeUrl('/login');
         }
-*/
+
       }
     }.bind(this));
   }

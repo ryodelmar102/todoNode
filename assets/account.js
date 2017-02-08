@@ -1,9 +1,10 @@
 class Account {
-  constructor(id, username, password){
+  constructor(id, username, password, role){
     this.state = {
       id:id,
       username:username,
       password:password,
+      role:role
     }
   }
   render(){
@@ -13,9 +14,15 @@ class Account {
     this.username = document.createElement('input');
     this.username.className = 'username';
     this.username.value = this.state.username;
+    if(this.state.role === 'reference'){
+      this.username.disabled = true;
+    }
     this.password = document.createElement('input');
     this.password.className = 'password';
     this.password.value = this.state.password;
+    if(this.state.role === 'reference'){
+      this.password.disabled = true;
+    }
     var accountEdit = document.createElement('div');
     accountEdit.className = 'accountEdit';
     var edit = document.createElement('input');

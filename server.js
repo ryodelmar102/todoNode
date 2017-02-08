@@ -19,27 +19,29 @@ var server = http.createServer(
   function(req,res){
     var todoController = new TodoController(connection,req,res);
     console.log(req.url);
-    todoController.beforeAction(function(loggedin){
+    todoController.beforeAction(function(loggedin,role){
       if (req.url === '/todo/show' && loggedin){
         todoController.show();
       } else if (req.url === '/todo/show/undone' && loggedin){
         todoController.undone();
-      } else if (req.url === '/todo/create' && loggedin){
+      } else if (req.url === '/todo/create' && loggedin && (role === 'admin' ||role === 'user')){
         todoController.create();
-      } else if (req.url === '/todo/edit' && loggedin){
+      } else if (req.url === '/todo/edit' && loggedin && (role === 'admin' ||role === 'user')){
         todoController.edit();
-      } else if (req.url === '/todo/delete' && loggedin){
+      } else if (req.url === '/todo/delete' && loggedin && (role === 'admin' ||role === 'user')){
         todoController.delete();
       } else if (req.url === '/account/login' && ! loggedin){
         todoController.login();
-      } else if (req.url === '/account/create' && ! loggedin){
+      } else if (req.url === '/account/create' && role === 'admin'){
         todoController.accountCreate();
-      } else if (req.url === '/account/show' && loggedin){
+      } else if (req.url === '/account/show' && loggedin && (role === 'admin' ||role === 'reference')){
         todoController.accountShow();
-      } else if (req.url === '/account/edit' && loggedin){
+      } else if (req.url === '/account/edit' && loggedin && role === 'admin'){
         todoController.accountEdit();
-      } else if (req.url === '/account/delete' && loggedin){
+      } else if (req.url === '/account/delete' && loggedin && role === 'admin'){
         todoController.accountDelete();
+      } else if (req.url === '/account/logout' && loggedin){
+        todoController.accountLogout();
       } else if (req.url === '/'||req.url === '/login'||req.url === '/todo'||req.url === '/create'||req.url === '/account'){
         var fileReader = new FileReader('./assets');
         var contents = fileReader.read('index.html');
@@ -69,7 +71,8 @@ var server = http.createServer(
           'content-type': 'application/json'
         })
         res.end(JSON.stringify({
-          loggedin: loggedin
+          loggedin: loggedin,
+          role: role
         }));
       } else {
         // not found を返す
@@ -96,33 +99,41 @@ class TodoController {
     if(cookie){cookie.split(';').forEach(function(cookie){
       var parts = cookie.split('=');
       object[parts.shift().trim()] = decodeURI(parts.join('='));
-      this.connection.query('select * from session where session_id = ?',[object['session_id']],function(error,rows,fields){
+      this.connection.query('select role, session.user_id from session inner join role on session.user_id = role.user_id where session.session_id = ?',[object['session_id']],function(error,rows,fields){
         if(error){
           throw error;
         }
+        this.req.cookie = object;
         if(rows.length > 0){
-          console.log('logged in');
-          callback(true);
+          var role = rows[0].role;
+          this.req.role = rows[0].role;
+          this.req.user_id = rows[0].user_id;
+          console.log(role)
+          callback(true,role);
         } else {
-          console.log('logged out');
-          callback(false);
+          callback(false,null);
         }
-      })
+      }.bind(this))
     }.bind(this))} else {
       console.log('logged out');
-      callback(false);
+      callback(false,null);
     }
     console.log(object['session_id']);
   }
   show(){
-    this.connection.query('select * from todos',function(error,rows,fields){
+    var sql = 'select * from todos';
+    var params = [];
+    if (this.req.role != 'admin' && this.req.role != 'reference'){
+      sql+= ' where user_id = ?'
+      params.push(this.req.user_id)
+    }
+    this.connection.query(sql,params,function(error,rows,fields){
       // error: the value returned when failed
       // rows: when successed, acquire all rows
       // fields: id, text, plan_date etc...
       if(error){
         throw error;
       }
-      console.log(rows[0].id);
       var tasks = rows.map(function(record){
         var task = new Task(record.id,record.text,record.plan_date,record.done);
         return task;
@@ -134,10 +145,13 @@ class TodoController {
     }.bind(this));
   }
   undone(){
-    this.connection.query('select * from todos where done=0',function(error,rows,fields){
-      // error: the value returned when failed
-      // rows: when successed, acquire all rows
-      // fields: id, text, plan_date etc...
+    var sql = 'select * from todos where done=0';
+    var params = [];
+    if (this.req.role != 'admin' && this.req.role != 'reference'){
+      sql+= ' and user_id = ?'
+      params.push(this.req.user_id)
+    }
+    this.connection.query(sql,params,function(error,rows,fields){
       if(error){
         throw error;
       }
@@ -161,7 +175,7 @@ class TodoController {
     this.req.on('end',function(){
       var post = qs.parse(body);
       console.log(post);
-      this.connection.query('insert into todos (text,plan_date,done) values (?,?,?)',[post.text, post.plan_date, false],function(error,rows,fields){
+      this.connection.query('insert into todos (text,plan_date,done,user_id) values (?,?,?,?)',[post.text, post.plan_date, false, this.req.user_id],function(error,rows,fields){
         console.log(error);
         this.res.writeHead(200,{
           'content-type':'application/json'
@@ -191,7 +205,7 @@ class TodoController {
       }.bind(this));
     }.bind(this))
   }
-  delete(){
+    delete(){
     var body = '';
     this.req.on('data',function(data){
       body+= data;
@@ -224,7 +238,7 @@ class TodoController {
           this.connection.query('insert into session (session_id,user_id) values (?,?)',[hash, rows[0].id],function(error,rows,fields){
             this.res.writeHead(200,{
               'content-type':'application/json',
-              'Set-Cookie':'session_id='+hash+';path=/;expires=Wed, 8-Feb-17 00:00:00 GMT'
+              'Set-Cookie':'session_id='+hash+';path=/;expires=Wed, 8-Feb-18 00:00:00 GMT'
             })
             this.res.end(JSON.stringify({}));
           }.bind(this));
@@ -306,6 +320,16 @@ class TodoController {
         this.res.end(JSON.stringify({}));
       }.bind(this));
     }.bind(this))
+  }
+  accountLogout(){
+    this.connection.query('delete from session where session_id = ?',[this.req.cookie['session_id']],function(error,rows,fields){
+        console.log(error);
+        this.res.writeHead(200,{
+          'content-type':'application/json',
+          'Set-Cookie':'session_id='+';path=/;expires=Wed, 1-Feb-17 00:00:00 GMT'
+        })
+        this.res.end(JSON.stringify({}));
+      }.bind(this));
   }
 }
 class FileReader {

@@ -1,7 +1,8 @@
 class AccountDashboard {
-  constructor() {
+  constructor(role) {
     this.state = {
-      lists:[]
+      lists:[],
+      role:role
     };
   }
   getLists(){
@@ -30,7 +31,7 @@ class AccountDashboard {
   }
   render(){
     var accounts = this.state.lists.map(function(list){
-      var account = new Account(list.id, list.username, list.password);
+      var account = new Account(list.id, list.username, list.password, this.state.role);
       account.onDeleted = this.onRefresh.bind(this);
       account.onEdited = this.onRefresh.bind(this);
       return account.render();

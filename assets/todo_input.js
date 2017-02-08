@@ -2,9 +2,24 @@ class TodoInput {
   constructor() {
     this.text = null;
     this.plan_date = null;
-    this.checked = null;
   }
   render(){
+    var logout = document.createElement('div');
+    logout.className = 'logout';
+    var logoutbutton = document.createElement('input');
+    logoutbutton.className = 'logoutbutton';
+    logoutbutton.type = 'button';
+    logoutbutton.value = 'Log Out';
+    logout.appendChild(logoutbutton);
+    logoutbutton.onclick = this.onLogOut.bind(this);
+    var account = document.createElement('div');
+    account.className = 'account';
+    var accountbutton = document.createElement('input');
+    accountbutton.className = 'accountbutton';
+    accountbutton.type = 'button';
+    accountbutton.value = 'Account';
+    account.appendChild(accountbutton);
+    accountbutton.onclick = this.accountClicked.bind(this);
     this.text = document.createElement('input');
     this.text.className = 'inputText';
     this.text.type = 'text';
@@ -19,33 +34,13 @@ class TodoInput {
     button.value = 'Create';
     button.onclick = this.onClicked.bind(this);
     createbutton.appendChild(button);
-    var showundone = document.createElement('label');
-    showundone.className = 'showundone';
-    showundone.innerText = 'Show Undone';
-    var undonecheck = document.createElement('div');
-    undonecheck.className = 'undonecheck';
-    this.checked = document.createElement('input')
-    this.checked.className = 'check';
-    this.checked.type = 'checkbox';
-    this.checked.checked = false;
-    this.checked.onchange = this.undoneCheck.bind(this);
-    undonecheck.appendChild(this.checked);
-    showundone.appendChild(this.checked);
-    var show = document.createElement('div');
-    show.className = 'show';
-    var showbutton = document.createElement('input');
-    showbutton.className = 'showbutton';
-    showbutton.type = 'button';
-    showbutton.value = 'Show';
-    showbutton.onclick = this.showList.bind(this,this.checked);
-    show.appendChild(showbutton);
     var create = document.createElement('div');
     create.className = 'create';
+    create.appendChild(logout);
+    create.appendChild(account);
     create.appendChild(this.text);
     create.appendChild(this.plan_date);
     create.appendChild(createbutton);
-    create.appendChild(show);
-    create.appendChild(showundone);
     return create;
   }
   onClicked(){
@@ -74,7 +69,25 @@ class TodoInput {
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     xhr.send(urlEncodedData);
   }
-  undoneCheck(event){
-    this.checked = event.target.checked;
+  onLogOut(){
+    var xhr = new XMLHttpRequest();
+    var url = 'http://localhost:3000/account/logout';
+    xhr.onreadystatechange = function(){
+      if(xhr.readyState === 4){
+        if(xhr.status === 200){
+          window.todoApp.changeUrl('/login');
+        } else if(xhr.status === 400){
+        }
+      }
+    };
+    xhr.open('POST',url,false);
+    xhr.send();
+  }
+  accountClicked(){
+    window.todoApp.changeUrl('/account');
+  }
+  reset(){
+    this.text.value = '';
+    this.plan_date.value = '';
   }
 }

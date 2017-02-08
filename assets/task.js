@@ -1,10 +1,11 @@
 class Task {
-  constructor(id, text, plan_date, done){
+  constructor(id, text, plan_date, done, role){
     this.state = {
       id:id,
       text:text,
       plan_date:plan_date,
-      done:done
+      done:done,
+      role:role
     }
   }
   render(){
@@ -14,18 +15,27 @@ class Task {
     this.text = document.createElement('input');
     this.text.className = 'todoText';
     this.text.value = this.state.text;
+    if(this.state.role === 'reference'){
+      this.text.disabled = true;
+    }
     this.plan_date = document.createElement('input');
     this.plan_date.className = 'plan_date';
+    if(this.state.role === 'reference'){
+      this.plan_date.disabled = true;
+    }
     var date = new Date(this.state.plan_date);
     this.plan_date.value = date.getFullYear()+'/'+(date.getMonth()+1)+'/'+date.getDate();
     var todoDone = document.createElement('div');
     todoDone.className = 'done';
-    var check = document.createElement('input');
-    check.className = 'check';
-    check.type = 'checkbox';
-    check.checked = this.state.done ? true:false;
-    check.onchange = this.onChange.bind(this);
-    todoDone.appendChild(check);
+    this.check = document.createElement('input');
+    this.check.className = 'check';
+    this.check.type = 'checkbox';
+    this.check.checked = this.state.done ? true:false;
+    this.check.onchange = this.onChange.bind(this);
+    if(this.state.role === 'reference'){
+      this.check.disabled = true;
+    }
+    todoDone.appendChild(this.check);
     var todoEdit = document.createElement('div');
     todoEdit.className = 'todoEdit';
     var edit = document.createElement('input');
@@ -33,6 +43,9 @@ class Task {
     edit.type = 'button';
     edit.onclick = this.onChange.bind(this);
     edit.value = 'Edit';
+    if(this.state.role === 'reference'){
+      edit.disabled = true;
+    }
     todoEdit.appendChild(edit);
     var todoDelete = document.createElement('div');
     todoDelete.className = 'todoDelete';
@@ -41,6 +54,9 @@ class Task {
     deletebutton.type = 'button';
     deletebutton.onclick = this.onDelete.bind(this);
     deletebutton.value = 'Delete';
+    if(this.state.role === 'reference'){
+      deletebutton.disabled = true;
+    }
     todoDelete.appendChild(deletebutton);
     var component = document.createElement('div');
     component.className = 'component';
@@ -53,7 +69,7 @@ class Task {
     return component;
   };
   onChange(event){
-    this.state.done = event.target.checked;
+    this.state.done = this.check.checked;
     this.state.text = this.text.value;
     this.state.plan_date = this.plan_date.value;
     var data = {
