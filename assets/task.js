@@ -79,7 +79,7 @@ class Task {
       done: this.state.done
     };
     var xhr = new XMLHttpRequest();
-    var url = 'http://localhost:3000/todo/edit';
+    var url = baseurl+'todo/edit';
     xhr.onreadystatechange = function(){
       if(xhr.readyState === 4){
          if(xhr.status === 200){
@@ -104,7 +104,7 @@ class Task {
       id: this.state.id
     }
     var xhr = new XMLHttpRequest();
-    var url = 'http://localhost:3000/todo/delete';
+    var url = baseurl+'todo/delete';
     xhr.onreadystatechange = function(){
       if(xhr.readyState === 4){
          if(xhr.status === 200){

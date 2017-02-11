@@ -57,7 +57,7 @@ class Account {
       password: this.state.password,
     };
     var xhr = new XMLHttpRequest();
-    var url = 'http://localhost:3000/account/edit';
+    var url = baseurl+'account/edit';
     xhr.onreadystatechange = function(){
       if(xhr.readyState === 4){
          if(xhr.status === 200){
@@ -82,7 +82,7 @@ class Account {
       id: this.state.id
     }
     var xhr = new XMLHttpRequest();
-    var url = 'http://localhost:3000/account/delete';
+    var url = baseurl+'account/delete';
     xhr.onreadystatechange = function(){
       if(xhr.readyState === 4){
          if(xhr.status === 200){

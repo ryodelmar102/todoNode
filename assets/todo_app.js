@@ -3,7 +3,7 @@ class TodoApp {
   }
   checkAuth(callback){
     var xhr = new XMLHttpRequest();
-    var url = 'http://localhost:3000/auth';
+    var url = baseurl+'auth';
     xhr.onreadystatechange = function(){
       console.log(xhr.status)
       if(xhr.readyState === 4){

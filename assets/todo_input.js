@@ -49,7 +49,7 @@ class TodoInput {
       plan_date: this.plan_date.value
     }
     var xhr = new XMLHttpRequest();
-    var url = 'http://localhost:3000/todo/create';
+    var url = baseurl+'todo/create';
     xhr.onreadystatechange = function(){
       if(xhr.readyState === 4){
          if(xhr.status === 200){
@@ -71,7 +71,7 @@ class TodoInput {
   }
   onLogOut(){
     var xhr = new XMLHttpRequest();
-    var url = 'http://localhost:3000/account/logout';
+    var url = baseurl+'account/logout';
     xhr.onreadystatechange = function(){
       if(xhr.readyState === 4){
         if(xhr.status === 200){

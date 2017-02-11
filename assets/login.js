@@ -41,7 +41,7 @@ class Login {
         password: this.password.value
       }
       var xhr = new XMLHttpRequest();
-      var url = 'http://localhost:3000/account/login';
+      var url = baseurl+'account/login';
       xhr.onreadystatechange = function(){
         if(xhr.readyState === 4){
           if(xhr.status === 200){

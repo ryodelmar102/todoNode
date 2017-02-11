@@ -7,7 +7,7 @@ class AccountDashboard {
   }
   getLists(){
     var xhr = new XMLHttpRequest();
-    var url = 'http://localhost:3000/account/show';
+    var url = baseurl+'account/show';
     xhr.onreadystatechange = function(){
       console.log(xhr.status)
       if(xhr.readyState === 4){

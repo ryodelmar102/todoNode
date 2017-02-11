@@ -21,6 +21,7 @@ function loadScript(filename){
   xhr.send();
 }
 var filenames = [];
+var baseurl = 'http://13.113.33.205:3000/';
 window.onload = function(){
 //  loadScript('task.js');
 //  loadScript('todo_input.js');

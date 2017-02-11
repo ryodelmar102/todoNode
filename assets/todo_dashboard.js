@@ -7,7 +7,7 @@ class TodoDashboard {
   }
   getLists(){
     var xhr = new XMLHttpRequest();
-    var url = 'http://localhost:3000/todo/show';
+    var url = baseurl+'todo/show';
     xhr.onreadystatechange = function(){
       console.log(xhr.status)
       if(xhr.readyState === 4){
@@ -62,7 +62,7 @@ class TodoDashboard {
   }
   getUndoneLists(){
     var xhr = new XMLHttpRequest();
-    var url = 'http://localhost:3000/todo/show/undone';
+    var url = baseurl+'todo/show/undone';
     xhr.onreadystatechange = function(){
       console.log(xhr.status)
       if(xhr.readyState === 4){
