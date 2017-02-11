@@ -54,7 +54,7 @@ class TodoDashboard {
     return component;
   }
   onRefresh(){
-    var component = this.superComponents.querySelector('#todoDashboard');
+    var component = document.getElementById('todoDashboard');
     this.superComponents.removeChild(component);
     this.getLists();
     var components = this.render();
@@ -78,7 +78,7 @@ class TodoDashboard {
   }
   showList(checkbox){
     console.log(this.superComponents.removeChild);
-    var component = this.superComponents.querySelector('#todoDashboard');
+    var component = document.getElementById('todoDashboard');
     this.superComponents.removeChild(component);
     if (checkbox.checked){
       this.getUndoneLists();
