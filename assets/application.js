@@ -21,7 +21,7 @@ function loadScript(filename){
   xhr.send();
 }
 var filenames = [];
-var baseurl = 'http://ryodelmar.com:3000/';
+var baseurl = 'https://ryodelmar.com/';
 window.onload = function(){
 //  loadScript('task.js');
 //  loadScript('todo_input.js');
