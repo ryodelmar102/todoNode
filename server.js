@@ -236,9 +236,12 @@ class TodoController {
         if (rows.length > 0 && post.password === rows[0].password){
           var hash = bcrypt.hashSync(Math.random()+'');
           this.connection.query('insert into session (session_id,user_id) values (?,?)',[hash, rows[0].id],function(error,rows,fields){
+            var date = new Date();
+            var expires = date.getTime()+1800;
             this.res.writeHead(200,{
               'content-type':'application/json',
-              'Set-Cookie':'session_id='+hash+';path=/;expires=Wed, 8-Feb-18 00:00:00 GMT'
+              'Set-Cookie':'session_id='+hash+';path=/;expires='+ new Date(expires).toUTCString()
+//              'Set-Cookie':'session_id='+hash+';path=/;expires=Wed, 8-Feb-18 00:00:00 GMT'
             })
             this.res.end(JSON.stringify({}));
           }.bind(this));
